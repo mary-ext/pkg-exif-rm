@@ -3,11 +3,11 @@
  * @returns A new image buffer with EXIF removed, will return `null` if
  *   image is unsupported, or if there's nothing to remove.
  */
-export const remove = (buf: ArrayBuffer): Uint8Array | null => {
-	const view = new DataView(buf);
-	const indices: [start: number, end: number][] = [];
+export const remove = (buf: Uint8Array): Uint8Array | null => {
+	const blen = buf.byteLength;
 
-	const blen = view.byteLength;
+	const view = new DataView(buf.buffer, buf.byteOffset, blen);
+	const indices: [start: number, end: number][] = [];
 
 	let start = 0;
 
@@ -80,13 +80,12 @@ export const remove = (buf: ArrayBuffer): Uint8Array | null => {
 		return null;
 	}
 
-	const uint8 = new Uint8Array(buf);
 	const copy = new Uint8Array(indices.reduce((accu, index) => accu + (index[1] - index[0]), blen - start));
 
 	copy.set(
-		uint8.subarray(start),
+		buf.subarray(start),
 		indices.reduce((offset, index) => {
-			copy.set(uint8.subarray(index[0], index[1]), offset);
+			copy.set(buf.subarray(index[0], index[1]), offset);
 			return offset + (index[1] - index[0]);
 		}, 0),
 	);
