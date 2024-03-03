@@ -1,0 +1,15 @@
+{
+	"name": "@mary/exif-rm",
+	"version": "0.1.0",
+	"exports": "./mod.ts",
+	"fmt": {
+		"useTabs": true,
+		"indentWidth": 2,
+		"lineWidth": 110,
+		"semiColons": true,
+		"singleQuote": true
+	},
+	"publish": {
+		"exclude": [".vscode/", "samples/", "deno.lock", "test.ts"]
+	}
+}
