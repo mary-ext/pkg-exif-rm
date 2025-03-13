@@ -10,6 +10,7 @@ export const remove = (buf: Uint8Array): Uint8Array | null => {
 	const indices: [start: number, end: number][] = [];
 
 	let start = 0;
+	let webp = false;
 
 	if (blen >= 2 && view.getUint16(0) === 0xffd8) {
 		// JPEG
@@ -74,6 +75,34 @@ export const remove = (buf: Uint8Array): Uint8Array | null => {
 
 			pos = end;
 		}
+	} else if (
+		blen >= 12 &&
+		/* RIFF */ view.getUint32(0) === 0x52494646 &&
+		/* WEBP */ view.getUint32(8) === 0x57454250
+	) {
+		// WebP
+		let pos = 12;
+
+		webp = true;
+
+		// RIFF format uses little-endian
+		while (pos + 4 + 4 <= blen) {
+			const marker = view.getUint32(pos, true);
+
+			const chunkSize = view.getUint32(pos + 4, true);
+			const end = pos + chunkSize + 4 + 4;
+
+			if (/* EXIF */ marker === 0x46495845 || /* "XMP "" */ marker === 0x20504D58) {
+				indices.push([start, pos]);
+				start = end;
+			}
+
+			// Move to the next chunk, add padding byte if chunk size is odd
+			pos = end;
+			if (chunkSize & 1) {
+				pos++;
+			}
+		}
 	}
 
 	if (start === 0) {
@@ -89,6 +118,14 @@ export const remove = (buf: Uint8Array): Uint8Array | null => {
 			return offset + (index[1] - index[0]);
 		}, 0),
 	);
+
+	if (webp) {
+		// Alter the RIFF header to reflect the new size
+		const view = new DataView(copy.buffer);
+		const newSize = copy.byteLength - 8;
+
+		view.setUint32(4, newSize, true);
+	}
 
 	return copy;
 };

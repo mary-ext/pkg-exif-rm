@@ -153,3 +153,54 @@ Deno.test('removes EXIF from PNG files', async () => {
 	assert(exifRemoved !== null);
 	assertEquals(await identify(exifRemoved), {});
 });
+
+Deno.test('removes EXIF from WebP files', async () => {
+	const image = await Deno.readFile('./samples/sample.webp');
+
+	// Verify the original image has EXIF data
+	assertEquals(await identify(image), {
+		'exif:ApertureValue': '45/8',
+		'exif:ColorSpace': '1',
+		'exif:ComponentsConfiguration': '...',
+		'exif:CustomRendered': '0',
+		'exif:DateTime': '2008:07:31 10:38:11',
+		'exif:DateTimeDigitized': '2008:05:30 15:56:01',
+		'exif:DateTimeOriginal': '2008:05:30 15:56:01',
+		'exif:ExifOffset': '190',
+		'exif:ExifVersion': '0221',
+		'exif:ExposureBiasValue': '0/1',
+		'exif:ExposureMode': '1',
+		'exif:ExposureProgram': '1',
+		'exif:ExposureTime': '1/160',
+		'exif:FNumber': '71/10',
+		'exif:Flash': '9',
+		'exif:FlashPixVersion': '0100',
+		'exif:FocalLength': '135/1',
+		'exif:FocalPlaneResolutionUnit': '2',
+		'exif:FocalPlaneXResolution': '324000/73',
+		'exif:FocalPlaneYResolution': '2592000/583',
+		'exif:Make': 'Canon',
+		'exif:MeteringMode': '5',
+		'exif:Model': 'Canon EOS 40D',
+		'exif:Orientation': '1',
+		'exif:PhotographicSensitivity': '100',
+		'exif:PixelXDimension': '100',
+		'exif:PixelYDimension': '68',
+		'exif:ResolutionUnit': '2',
+		'exif:SceneCaptureType': '0',
+		'exif:ShutterSpeedValue': '59/8',
+		'exif:Software': 'GIMP 2.4.5',
+		'exif:SubSecTime': '00',
+		'exif:SubSecTimeDigitized': '00',
+		'exif:SubSecTimeOriginal': '00',
+		'exif:WhiteBalance': '0',
+		'exif:XResolution': '72/1',
+		'exif:YResolution': '72/1',
+	});
+
+	const exifRemoved = remove(image);
+
+	// Verify the image has no EXIF data
+	assert(exifRemoved !== null);
+	assertEquals(await identify(exifRemoved), {});
+});
