@@ -92,7 +92,7 @@ export const remove = (buf: Uint8Array): Uint8Array | null => {
 			const chunkSize = view.getUint32(pos + 4, true);
 			const end = pos + chunkSize + 4 + 4;
 
-			if (/* EXIF */ marker === 0x46495845 || /* "XMP "" */ marker === 0x20504D58) {
+			if (/* EXIF */ marker === 0x46495845 || /* "XMP " */ marker === 0x20504D58) {
 				indices.push([start, pos]);
 				start = end;
 			}
