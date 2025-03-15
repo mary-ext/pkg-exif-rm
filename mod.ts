@@ -1,5 +1,5 @@
 /**
- * Removes EXIF information from PNG and JPEG images
+ * Removes EXIF information from PNG, JPEG and WebP images
  * @returns A new image buffer with EXIF removed, will return `null` if
  *   image is unsupported, or if there's nothing to remove.
  */
