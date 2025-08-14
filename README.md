@@ -1,6 +1,8 @@
 # exif-rm
 
-Remove EXIF information from PNG, JPEG and WebP images.
+[JSR](https://jsr.io/@mary/exif-rm) | [source code](https://tangled.sh/@mary.my.id/pkg-exif-rm)
+
+remove EXIF information from PNG, JPEG and WebP images.
 
 ```ts
 const image = await Deno.readFile('./samples/sample.jpg');
